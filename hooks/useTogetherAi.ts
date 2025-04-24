@@ -20,7 +20,7 @@ export function useTogetherChat() {
   const [error, setError] = useState<string | null>(null);
 
   const together = new Together({
-    apiKey: "3a29c1176629378176d799e432c2f25aaaed7520aef06e28b3a37b159b946069",
+    apiKey: process.env.NEXT_PUBLIC_TG_API_KEY || "",
   });
 
   const sendMessage = async (userInput: string) => {
