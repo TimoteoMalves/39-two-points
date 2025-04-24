@@ -3,7 +3,7 @@
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
 import { Divider } from "@heroui/divider";
-import { LuPen, LuTrash } from "react-icons/lu";
+import { LuPen, LuPlus, LuTrash } from "react-icons/lu";
 
 export function Deck() {
   return (
@@ -19,6 +19,9 @@ export function Deck() {
         <span className="font-bold">Criado em 22/05/2025</span>
       </CardBody>
       <CardFooter className="flex justify-end gap-1">
+        <Button isIconOnly size="sm" color="secondary" variant="flat">
+          <LuPlus />
+        </Button>
         <Button isIconOnly color="danger" size="sm" variant="flat">
           <LuTrash />
         </Button>
