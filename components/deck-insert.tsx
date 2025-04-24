@@ -1,5 +1,7 @@
 "use client";
 
+import { useMutationCreateDeck } from "@/hooks/deck/mutations";
+import { useQueryGetLanguages } from "@/hooks/language/hooks";
 import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
 import { Form } from "@heroui/form";
@@ -12,18 +14,36 @@ import {
   ModalHeader,
 } from "@heroui/modal";
 import { Select, SelectItem } from "@heroui/select";
+import { addToast } from "@heroui/toast";
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { LuPlus } from "react-icons/lu";
 
-export const animals = [
-  { key: "cat", label: "Cat" },
-  { key: "dog", label: "Dog" },
-  { key: "elephant", label: "Elephant" },
-  { key: "lion", label: "Lion" },
-];
-
 export function DeckInsert() {
+  const form = useForm();
+
+  const { data, isLoading } = useQueryGetLanguages();
+  const createDeck = useMutationCreateDeck();
   const [isOpen, setIsOpen] = useState(false);
+
+  const onSubmit = form.handleSubmit(async (data) => {
+    createDeck
+      .mutateAsync({
+        languageId: parseInt(data.languageId, 10),
+        name: data.name,
+      })
+      .then(() => {
+        addToast({
+          title: "Sucesso",
+          description: "Deck criado com sucesso.",
+          color: "success",
+          shouldShowTimeoutProgress: true,
+        });
+
+        form.reset();
+        setIsOpen(false);
+      });
+  });
 
   return (
     <>
@@ -45,30 +65,51 @@ export function DeckInsert() {
             <span>Header</span>
           </ModalHeader>
           <ModalBody>
-            <Form>
-              <Input
-                isRequired
-                label="Nome"
-                labelPlacement="outside"
-                placeholder="Digite o nome para o deck..."
+            <Form id="form-deck" onSubmit={onSubmit}>
+              <Controller
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    isRequired
+                    label="Nome"
+                    labelPlacement="outside"
+                    placeholder="Digite o nome para o deck..."
+                  />
+                )}
               />
-              <Select
-                isRequired
-                label="Idioma"
-                labelPlacement="outside"
-                placeholder="Selecione um idioma"
-              >
-                {animals.map((animal) => (
-                  <SelectItem key={animal.key}>{animal.label}</SelectItem>
-                ))}
-              </Select>
+              <Controller
+                control={form.control}
+                name="languageId"
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    isRequired
+                    disabled={isLoading}
+                    label="Idioma"
+                    labelPlacement="outside"
+                    placeholder="Selecione um idioma"
+                  >
+                    {(data ?? []).map((language) => (
+                      <SelectItem key={language.id}>{language.name}</SelectItem>
+                    ))}
+                  </Select>
+                )}
+              />
             </Form>
           </ModalBody>
           <ModalFooter>
             <Button size="sm" onPress={() => setIsOpen(false)}>
               Fechar
             </Button>
-            <Button type="submit" color="primary" size="sm">
+            <Button
+              color="primary"
+              form="form-deck"
+              isLoading={createDeck.isPending}
+              size="sm"
+              type="submit"
+            >
               Salvar
             </Button>
           </ModalFooter>
