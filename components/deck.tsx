@@ -61,9 +61,9 @@ export function Deck({
         <div className="flex gap-2 items-center">
           <Image
             alt="flag"
+            className="border"
             src={flags[language_id as keyof typeof flags]}
             width={15}
-            className="border"
           />
           <p>{language}</p>
         </div>

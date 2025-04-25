@@ -4,13 +4,21 @@ import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Link } from "@heroui/link";
 import { useState } from "react";
-import { LuArrowLeft, LuFile, LuHeadset, LuSend, LuX } from "react-icons/lu";
+import {
+  LuArrowLeft,
+  LuArrowRight,
+  LuFile,
+  LuHeadset,
+  LuSend,
+  LuX,
+} from "react-icons/lu";
 import { Spinner } from "@heroui/spinner";
 
 import { Typewriter } from "@/components/type-writer";
 import { useGeminiChat } from "@/hooks/useGemini";
 import AudioUploader from "@/components/audio-uploader";
 import ImageUploader from "@/components/image-uploader";
+import { Image } from "@heroui/image";
 
 export default function Home() {
   const [input, setInput] = useState("");
@@ -92,18 +100,35 @@ export default function Home() {
             )}
           </div>
 
-          <div className="flex gap-2 justify-end">
-            <ImageUploader setImageFile={setImageFile} />
-            <AudioUploader setAudioFile={setAudioFile} />
-            <Button
-              isIconOnly
-              className="border dark:border-zinc-600"
-              color="primary"
-              radius="full"
-              type="submit"
-            >
-              <LuSend />
-            </Button>
+          <div className="flex gap-2 justify-between">
+            <div className="flex gap-2 items-center">
+              <Image
+                alt="flag"
+                className="border"
+                src="/languages/brazil.png"
+                width={25}
+              />
+              <LuArrowRight size={20} />
+              <Image
+                alt="flag"
+                className="border"
+                src="/languages/united-states.png"
+                width={25}
+              />
+            </div>
+            <div className="flex gap-2">
+              <ImageUploader setImageFile={setImageFile} />
+              <AudioUploader setAudioFile={setAudioFile} />
+              <Button
+                isIconOnly
+                className="border dark:border-zinc-600"
+                color="primary"
+                radius="full"
+                type="submit"
+              >
+                <LuSend />
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -121,7 +146,7 @@ export default function Home() {
           <div className="col-span-2 flex flex-col gap-1">
             {message.corrected_pt && (
               <>
-                <span className="text-lg">Frase original:</span>
+                <span className="text-lg">Frente:</span>
                 <span className="flex gap-3 items-start p-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 shadow">
                   <Typewriter text={message.corrected_pt} />
                 </span>
@@ -132,7 +157,7 @@ export default function Home() {
           <div className="col-span-2 flex flex-col gap-1">
             {message.en_translation && (
               <>
-                <span className="text-lg">Frase traduzida:</span>
+                <span className="text-lg">Verso:</span>
                 <span className="flex gap-3 items-start p-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 shadow">
                   <Typewriter text={message.en_translation} />
                 </span>
@@ -140,7 +165,7 @@ export default function Home() {
             )}
           </div>
 
-          <div className="col-span-4 flex flex-col gap-1">
+          <div className="col-span-4 flex flex-col gap-1 text-sm">
             {message.grammar_tips.length > 0 && (
               <div className="flex flex-col gap-1">
                 <span className="text-lg">Dicas gramaticais:</span>
