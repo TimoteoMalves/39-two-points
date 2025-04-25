@@ -1,53 +1,29 @@
-# Next.js & HeroUI Template
+# IA Project
 
-This is a template for creating applications using Next.js 14 (app directory) and HeroUI (v2).
+Este é um projeto em desenvolvimento que utiliza inteligência artificial para interações específicas.
 
-[Try it on CodeSandbox](https://githubbox.com/heroui-inc/heroui/next-app-template)
+## Como executar o projeto
 
-## Technologies Used
+1. Certifique-se de ter o [PNPM](https://pnpm.io/) instalado em sua máquina.
+2. No terminal, execute o comando abaixo para iniciar o projeto:
 
-- [Next.js 14](https://nextjs.org/docs/getting-started)
-- [HeroUI v2](https://heroui.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Tailwind Variants](https://tailwind-variants.org)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Framer Motion](https://www.framer.com/motion/)
-- [next-themes](https://github.com/pacocoursey/next-themes)
+    ```bash
+    pnpm dev
+    ```
 
-## How to Use
+## Variáveis de ambiente
 
-### Use the template with create-next-app
+O projeto requer **duas variáveis de ambiente** essenciais para funcionar corretamente. Estas variáveis não estão incluídas no repositório para evitar vazamento de informações sensíveis. Caso precise delas, entre em contato comigo diretamente.
 
-To create a new project based on this template using `create-next-app`, run the following command:
+## Rota de interação com IA
 
-```bash
-npx create-next-app -e https://github.com/heroui-inc/next-app-template
+A interação com a inteligência artificial está disponível na seguinte rota:
+
+```
+https://ia-project-eta.vercel.app/deck/1
 ```
 
-### Install dependencies
+## Status do projeto
 
-You can use one of them `npm`, `yarn`, `pnpm`, `bun`, Example using `npm`:
+O projeto ainda está em andamento e não consegui concluir todas as funcionalidades que planejei a tempo. Novas atualizações serão feitas em breve.
 
-```bash
-npm install
-```
-
-### Run the development server
-
-```bash
-npm run dev
-```
-
-### Setup pnpm (optional)
-
-If you are using `pnpm`, you need to add the following code to your `.npmrc` file:
-
-```bash
-public-hoist-pattern[]=*@heroui/*
-```
-
-After modifying the `.npmrc` file, you need to run `pnpm install` again to ensure that the dependencies are installed correctly.
-
-## License
-
-Licensed under the [MIT license](https://github.com/heroui-inc/next-app-template/blob/main/LICENSE).
