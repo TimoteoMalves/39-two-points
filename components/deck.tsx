@@ -3,14 +3,48 @@
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
 import { Divider } from "@heroui/divider";
+import { addToast } from "@heroui/toast";
 import { LuPen, LuPlus, LuTrash } from "react-icons/lu";
 
-export function Deck() {
+import { ModalDeck } from "./modal-deck";
+
+import { type Deck, useMutationDeleteDeck } from "@/hooks/deck/hooks";
+import { Link } from "@heroui/link";
+
+type DeckProps = Deck & {
+  refetchDecks: () => void;
+};
+
+export function Deck({
+  id,
+  language,
+  name,
+  language_id,
+  refetchDecks,
+}: DeckProps) {
+  const deleteDeck = useMutationDeleteDeck();
+
+  const handleDeleteDeck = async () => {
+    deleteDeck.mutateAsync(id).then(() => {
+      addToast({
+        title: "Sucesso",
+        description: "Deck deletado com sucesso.",
+        color: "success",
+        shouldShowTimeoutProgress: true,
+      });
+      refetchDecks();
+    });
+  };
+
   return (
-    <Card className="p-3 hover:scale-105 border" shadow="none">
+    <Card className="p-3 hover:scale-105 aspect-[2/3] border" shadow="none">
       <CardHeader className="flex flex-col items-start">
-        <h1 className="text-xl font-bold">English</h1>
-        <p className="text-base">My english deck</p>
+        <h1 className="text-xl font-bold">
+          #{id} {name}
+        </h1>
+        <p className="text-base">
+          #{language_id} {language}
+        </p>
       </CardHeader>
       <Divider />
       <CardBody className="text-sm flex flex-col gap-1">
@@ -18,18 +52,21 @@ export function Deck() {
         <p>Revisar: 0</p>
         <span className="font-bold">Criado em 22/05/2025</span>
       </CardBody>
-      <CardFooter className="flex justify-end gap-1">
-        <Button isIconOnly size="sm" color="secondary" variant="flat">
+      <CardFooter className="flex justify-end gap-3">
+        <Link href={`/deck/${id}`}>
           <LuPlus />
-        </Button>
-        <Button isIconOnly color="danger" size="sm" variant="flat">
+        </Link>
+        <button onClick={handleDeleteDeck}>
           <LuTrash />
-        </Button>
-        <Button isIconOnly color="success" size="sm" variant="flat">
+        </button>
+        <ModalDeck
+          deck={{ id, name, language, language_id }}
+          refetchDecks={refetchDecks}
+        >
           <LuPen />
-        </Button>
+        </ModalDeck>
         <Button color="primary" size="sm" variant="flat">
-          Revisar +25
+          Revisar
         </Button>
       </CardFooter>
     </Card>

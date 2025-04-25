@@ -3,7 +3,8 @@
 import sql from "@/lib/db";
 
 export async function getDecks() {
-  const response = await sql`SELECT d.id, d.name, l.name
+  const response =
+    await sql`SELECT d.id, d.name, l.name as language, l.id as language_id
                               FROM deck d
                               INNER JOIN language l ON l.id = d.language_id`;
 

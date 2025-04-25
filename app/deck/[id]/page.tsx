@@ -4,20 +4,27 @@ import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Link } from "@heroui/link";
 import { useState } from "react";
-import { LuArrowLeft, LuSend } from "react-icons/lu";
+import { LuArrowLeft, LuSend, LuX } from "react-icons/lu";
 import { Spinner } from "@heroui/spinner";
 
-import { useTogetherChat } from "@/hooks/useTogetherAi";
 import { Typewriter } from "@/components/type-writer";
+import { useGeminiChat } from "@/hooks/useGemini";
+import AudioUploader from "@/components/audio-uploader";
 
 export default function Home() {
   const [input, setInput] = useState("");
-  const { message, loading, error, sendMessage } = useTogetherChat();
+  const [audioFile, setAudioFile] = useState<File | null>(null);
+  const { message, loading, error, sendMessage, sendAudio } = useGeminiChat();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (input.trim()) {
-      await sendMessage(input);
+
+    if (audioFile) {
+      sendAudio(audioFile);
+    } else {
+      if (input.trim()) {
+        await sendMessage(input);
+      }
     }
   };
 
@@ -25,34 +32,48 @@ export default function Home() {
     <section className="flex flex-col gap-6">
       <div className="flex gap-3 items-center">
         <Link href="/">
-          <Button className="flex gap-3" isIconOnly radius="full">
+          <Button isIconOnly className="flex gap-3" radius="full">
             <LuArrowLeft />
           </Button>
         </Link>
-        <h1 className="text-4xl">Criar novo deck</h1>
+        <h1 className="text-4xl">Criar novo card</h1>
       </div>
+
       <form className="flex flex-col flex-1 gap-3" onSubmit={handleSubmit}>
         <div className="bg-zinc-100 shadow flex flex-col gap-3 dark:bg-zinc-800 p-4 rounded-2xl">
-          <Input
-            isRequired
-            errorMessage={"Este campo é obrigatório"}
-            label="Sua frase"
-            labelPlacement="outside"
-            placeholder="Digite aqui sua frase"
-            type="textarea"
-            value={input}
-            variant="underlined"
-            onChange={(e) => setInput(e.target.value)}
-          />
-          <Button
-            isIconOnly
-            className="w-min ml-auto flex gap-3"
-            color="primary"
-            radius="full"
-            type="submit"
-          >
-            <LuSend />
-          </Button>
+          {audioFile && (
+            <div className="text-sm flex gap-3 items-center">
+              <span>🎧 Arquivo:</span> <strong>{audioFile.name}</strong>
+              <Button
+                isIconOnly
+                radius="full"
+                size="sm"
+                onPress={() => setAudioFile(null)}
+              >
+                <LuX />
+              </Button>
+            </div>
+          )}
+          {!audioFile && (
+            <Input
+              isRequired
+              errorMessage={"Este campo é obrigatório"}
+              label="Sua frase"
+              labelPlacement="outside"
+              placeholder="Digite aqui sua frase"
+              type="textarea"
+              value={input}
+              variant="underlined"
+              onChange={(e) => setInput(e.target.value)}
+            />
+          )}
+
+          <div className="flex gap-3 justify-end">
+            <AudioUploader setAudioFile={setAudioFile} />
+            <Button isIconOnly color="primary" radius="full" type="submit">
+              <LuSend />
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-4 w-full gap-3">
