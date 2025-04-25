@@ -25,5 +25,5 @@ https://ia-project-eta.vercel.app/deck/1
 
 ## Status do projeto
 
-O projeto ainda está em andamento e não consegui concluir todas as funcionalidades que planejei a tempo. Novas atualizações serão feitas em breve.
+O projeto ainda está em andamento e não consegui concluir todas as funcionalidades que planejei a tempo.
 
