@@ -50,8 +50,7 @@ export default function RootLayout({
                 <span className="text-sm">
                   Diversas funcionalidades adicionais estão em fase de
                   planejamento, incluindo a transcrição de vídeos, imagens e
-                  áudios, com o objetivo de ampliar ainda mais a acessibilidade
-                  e a eficiência da plataforma
+                  áudios, decks e cards ainda não implementados.
                 </span>
               </div>
               {children}
