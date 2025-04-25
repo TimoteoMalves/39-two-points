@@ -4,22 +4,27 @@ import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Link } from "@heroui/link";
 import { useState } from "react";
-import { LuArrowLeft, LuSend, LuX } from "react-icons/lu";
+import { LuArrowLeft, LuFile, LuHeadset, LuSend, LuX } from "react-icons/lu";
 import { Spinner } from "@heroui/spinner";
 
 import { Typewriter } from "@/components/type-writer";
 import { useGeminiChat } from "@/hooks/useGemini";
 import AudioUploader from "@/components/audio-uploader";
+import ImageUploader from "@/components/image-uploader";
 
 export default function Home() {
   const [input, setInput] = useState("");
   const [audioFile, setAudioFile] = useState<File | null>(null);
-  const { message, loading, error, sendMessage, sendAudio } = useGeminiChat();
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const { message, loading, error, sendMessage, sendAudio, sendImage } =
+    useGeminiChat();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (audioFile) {
+    if (imageFile) {
+      sendImage(imageFile);
+    } else if (audioFile) {
       sendAudio(audioFile);
     } else {
       if (input.trim()) {
@@ -41,9 +46,12 @@ export default function Home() {
 
       <form className="flex flex-col flex-1 gap-3" onSubmit={handleSubmit}>
         <div className="bg-zinc-100 shadow flex flex-col gap-3 dark:bg-zinc-800 p-4 rounded-2xl">
-          {audioFile && (
+          {imageFile && (
             <div className="text-sm flex gap-3 items-center">
-              <span>🎧 Arquivo:</span> <strong>{audioFile.name}</strong>
+              <span className="flex gap-3 items-center">
+                <LuFile /> <span>Arquivo:</span>
+              </span>
+              <strong>{imageFile.name}</strong>
               <Button
                 isIconOnly
                 radius="full"
@@ -54,7 +62,23 @@ export default function Home() {
               </Button>
             </div>
           )}
-          {!audioFile && (
+          {audioFile && (
+            <div className="text-sm flex gap-3 items-center">
+              <span className="flex gap-3 items-center">
+                <LuHeadset /> <span>Arquivo:</span>
+              </span>
+              <strong>{audioFile.name}</strong>
+              <Button
+                isIconOnly
+                radius="full"
+                size="sm"
+                onPress={() => setAudioFile(null)}
+              >
+                <LuX />
+              </Button>
+            </div>
+          )}
+          {!audioFile && !imageFile && (
             <Input
               isRequired
               errorMessage={"Este campo é obrigatório"}
@@ -69,6 +93,7 @@ export default function Home() {
           )}
 
           <div className="flex gap-3 justify-end">
+            <ImageUploader setImageFile={setImageFile} />
             <AudioUploader setAudioFile={setAudioFile} />
             <Button isIconOnly color="primary" radius="full" type="submit">
               <LuSend />

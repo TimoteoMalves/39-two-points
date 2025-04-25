@@ -15,7 +15,6 @@ export default function Home() {
       <div>
         <h1 className="text-4xl">Meus decks</h1>
       </div>
-      <Divider />
       {isLoading && <Spinner />}
 
       {data && !isLoading && (

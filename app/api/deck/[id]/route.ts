@@ -20,7 +20,7 @@ export async function DELETE(req: NextRequest) {
   );
 }
 
-export async function POST(req: NextRequest) {
+export async function PUT(req: NextRequest) {
   const url = new URL(req.url);
   const id = parseInt(url.pathname.split("/").pop() || "");
 

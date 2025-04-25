@@ -2,13 +2,13 @@
 
 import { Button } from "@heroui/button";
 import { useRef } from "react";
-import { LuMic } from "react-icons/lu";
+import { LuImage } from "react-icons/lu";
 
-type AudioUploaderProps = {
-  setAudioFile: (file: File | null) => void;
+type ImageUploaderProps = {
+  setImageFile: (file: File | null) => void;
 };
 
-export default function AudioUploader({ setAudioFile }: AudioUploaderProps) {
+export default function ImageUploader({ setImageFile }: ImageUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleButtonClick = () => {
@@ -18,11 +18,11 @@ export default function AudioUploader({ setAudioFile }: AudioUploaderProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
-    if (file) {
-      setAudioFile(file);
+    if (file && file.type === "image/jpeg") {
+      setImageFile(file);
     } else {
-      alert("Por favor, envie um arquivo .mp3 válido.");
-      setAudioFile(null);
+      alert("Por favor, envie uma imagem .jpeg válida.");
+      setImageFile(null);
     }
 
     e.target.value = "";
@@ -32,7 +32,7 @@ export default function AudioUploader({ setAudioFile }: AudioUploaderProps) {
     <>
       <input
         ref={inputRef}
-        accept="audio/mp3"
+        accept="image/jpeg"
         className="hidden"
         type="file"
         onChange={handleChange}
@@ -45,7 +45,7 @@ export default function AudioUploader({ setAudioFile }: AudioUploaderProps) {
         type="button"
         onPress={handleButtonClick}
       >
-        <LuMic />
+        <LuImage />
       </Button>
     </>
   );

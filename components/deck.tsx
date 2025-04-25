@@ -10,6 +10,7 @@ import { ModalDeck } from "./modal-deck";
 
 import { type Deck, useMutationDeleteDeck } from "@/hooks/deck/hooks";
 import { Link } from "@heroui/link";
+import { genRandomColor } from "@/utils/gen-random-colors";
 
 type DeckProps = Deck & {
   refetchDecks: () => void;
@@ -37,36 +38,41 @@ export function Deck({
   };
 
   return (
-    <Card className="p-3 hover:scale-105 aspect-[2/3] border" shadow="none">
-      <CardHeader className="flex flex-col items-start">
-        <h1 className="text-xl font-bold">
-          #{id} {name}
-        </h1>
-        <p className="text-base">
-          #{language_id} {language}
-        </p>
-      </CardHeader>
+    <Card className="border" shadow="none">
+      <CardHeader
+        className="flex flex-col h-10 items-start"
+        style={{
+          backgroundColor: genRandomColor(),
+        }}
+      />
       <Divider />
-      <CardBody className="text-sm flex flex-col gap-1">
-        <p>Total: 0</p>
-        <p>Revisar: 0</p>
-        <span className="font-bold">Criado em 22/05/2025</span>
+      <CardBody className="text-sm h-20 flex flex-col">
+        <span className="font-bold text-base">{name}</span>
+        <p>{language}</p>
       </CardBody>
-      <CardFooter className="flex justify-end gap-3">
-        <Link href={`/deck/${id}`}>
+      <CardFooter className="flex h-12 justify-end gap-1">
+        <Link
+          className="border rounded-full text-black p-2 bg-gray-100 hover:bg-gray-200"
+          href={`/deck/${id}`}
+        >
           <LuPlus />
         </Link>
-        <button onClick={handleDeleteDeck}>
+        <button
+          className="border rounded-full p-2 bg-gray-100 hover:bg-gray-200"
+          onClick={handleDeleteDeck}
+        >
           <LuTrash />
         </button>
         <ModalDeck
           deck={{ id, name, language, language_id }}
           refetchDecks={refetchDecks}
         >
-          <LuPen />
+          <div className="border rounded-full p-2 bg-gray-100 hover:bg-gray-200">
+            <LuPen className="fill-transparent" />
+          </div>
         </ModalDeck>
-        <Button color="primary" size="sm" variant="flat">
-          Revisar
+        <Button color="primary" radius="full" size="sm">
+          Revisar +25
         </Button>
       </CardFooter>
     </Card>
