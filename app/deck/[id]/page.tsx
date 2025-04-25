@@ -72,6 +72,62 @@ export default function Home() {
         variant="bordered"
       >
         <Tab
+          key="cards"
+          title={
+            <div className="flex items-center space-x-2">
+              <LuList />
+              <span>Cards do deck</span>
+            </div>
+          }
+        >
+          <Table aria-label="Example static collection table">
+            <TableHeader>
+              <TableColumn>ID</TableColumn>
+              <TableColumn>Frente</TableColumn>
+              <TableColumn>Verso</TableColumn>
+              <TableColumn>Grammars</TableColumn>
+            </TableHeader>
+            <TableBody>
+              <TableRow key="1">
+                <TableCell>1</TableCell>
+                <TableCell>Olá, mundo!</TableCell>
+                <TableCell>Hello, world!</TableCell>
+                <TableCell>2</TableCell>
+              </TableRow>
+              <TableRow key="2">
+                <TableCell>2</TableCell>
+                <TableCell>
+                  O rato roubou a roupa do rei de Roma usando uma moto.
+                </TableCell>
+                <TableCell>
+                  {
+                    "The rat stole the king of Rome's clothes using a motorcycle."
+                  }
+                </TableCell>
+                <TableCell>9</TableCell>
+              </TableRow>
+              <TableRow key="3">
+                <TableCell>3</TableCell>
+                <TableCell>
+                  Está muito frio hoje, você pegou o seu casaco?
+                </TableCell>
+                <TableCell>
+                  {"It's very cold today, did you grab your coat?"}
+                </TableCell>
+                <TableCell>9</TableCell>
+              </TableRow>
+              <TableRow key="4">
+                <TableCell>4</TableCell>
+                <TableCell>
+                  Nem todo mundo é igual a você, seu bobalhão.
+                </TableCell>
+                <TableCell>Not everyone is like you, you goofball.</TableCell>
+                <TableCell>6</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </Tab>
+        <Tab
           key="insert-cards"
           title={
             <div className="flex items-center space-x-2">
@@ -220,62 +276,6 @@ export default function Home() {
               )}
             </div>
           </form>
-        </Tab>
-        <Tab
-          key="cards"
-          title={
-            <div className="flex items-center space-x-2">
-              <LuList />
-              <span>Cards do deck</span>
-            </div>
-          }
-        >
-          <Table aria-label="Example static collection table">
-            <TableHeader>
-              <TableColumn>ID</TableColumn>
-              <TableColumn>Frente</TableColumn>
-              <TableColumn>Verso</TableColumn>
-              <TableColumn>Grammars</TableColumn>
-            </TableHeader>
-            <TableBody>
-              <TableRow key="1">
-                <TableCell>1</TableCell>
-                <TableCell>Olá, mundo!</TableCell>
-                <TableCell>Hello, world!</TableCell>
-                <TableCell>2</TableCell>
-              </TableRow>
-              <TableRow key="2">
-                <TableCell>2</TableCell>
-                <TableCell>
-                  O rato roubou a roupa do rei de Roma usando uma moto.
-                </TableCell>
-                <TableCell>
-                  {
-                    "The rat stole the king of Rome's clothes using a motorcycle."
-                  }
-                </TableCell>
-                <TableCell>9</TableCell>
-              </TableRow>
-              <TableRow key="3">
-                <TableCell>3</TableCell>
-                <TableCell>
-                  Está muito frio hoje, você pegou o seu casaco?
-                </TableCell>
-                <TableCell>
-                  {"It's very cold today, did you grab your coat?"}
-                </TableCell>
-                <TableCell>9</TableCell>
-              </TableRow>
-              <TableRow key="4">
-                <TableCell>4</TableCell>
-                <TableCell>
-                  Nem todo mundo é igual a você, seu bobalhão.
-                </TableCell>
-                <TableCell>Not everyone is like you, you goofball.</TableCell>
-                <TableCell>6</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
         </Tab>
       </Tabs>
     </section>
