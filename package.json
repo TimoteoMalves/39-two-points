@@ -27,6 +27,8 @@
     "@heroui/spinner": "^2.2.14",
     "@heroui/switch": "2.2.15",
     "@heroui/system": "2.4.13",
+    "@heroui/table": "^2.2.16",
+    "@heroui/tabs": "^2.2.14",
     "@heroui/theme": "2.4.13",
     "@heroui/toast": "^2.0.7",
     "@heroui/tooltip": "^2.2.14",
