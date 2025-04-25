@@ -45,57 +45,63 @@ export default function Home() {
       </div>
 
       <form className="flex flex-col flex-1 gap-3" onSubmit={handleSubmit}>
-        <div className="bg-zinc-100 shadow flex flex-col gap-3 dark:bg-zinc-800 p-4 rounded-2xl">
-          {imageFile && (
-            <div className="text-sm flex gap-3 items-center">
-              <span className="flex gap-3 items-center">
-                <LuFile /> <span>Arquivo:</span>
-              </span>
-              <strong>{imageFile.name}</strong>
-              <Button
-                isIconOnly
-                radius="full"
-                size="sm"
-                onPress={() => setAudioFile(null)}
-              >
-                <LuX />
-              </Button>
-            </div>
-          )}
-          {audioFile && (
-            <div className="text-sm flex gap-3 items-center">
-              <span className="flex gap-3 items-center">
-                <LuHeadset /> <span>Arquivo:</span>
-              </span>
-              <strong>{audioFile.name}</strong>
-              <Button
-                isIconOnly
-                radius="full"
-                size="sm"
-                onPress={() => setAudioFile(null)}
-              >
-                <LuX />
-              </Button>
-            </div>
-          )}
-          {!audioFile && !imageFile && (
-            <Input
-              isRequired
-              errorMessage={"Este campo é obrigatório"}
-              label="Sua frase"
-              labelPlacement="outside"
-              placeholder="Digite aqui sua frase"
-              type="textarea"
-              value={input}
-              variant="underlined"
-              onChange={(e) => setInput(e.target.value)}
-            />
-          )}
+        <div className="bg-zinc-100 border dark:border-zinc-600 shadow flex flex-col gap-3 dark:bg-zinc-800 p-6 rounded-2xl">
+          <div className="h-10">
+            {imageFile && (
+              <div className="text-sm flex gap-3 items-center">
+                <span className="flex gap-3 items-center">
+                  <LuFile /> <span>Arquivo:</span>
+                </span>
+                <strong>{imageFile.name}</strong>
+                <Button
+                  isIconOnly
+                  radius="full"
+                  size="sm"
+                  onPress={() => setImageFile(null)}
+                >
+                  <LuX />
+                </Button>
+              </div>
+            )}
+            {audioFile && (
+              <div className="text-sm flex gap-1 items-center">
+                <span className="flex gap-3 items-center">
+                  <LuHeadset /> <span>Arquivo:</span>
+                </span>
+                <strong>{audioFile.name}</strong>
+                <Button
+                  isIconOnly
+                  radius="full"
+                  size="sm"
+                  onPress={() => setAudioFile(null)}
+                >
+                  <LuX />
+                </Button>
+              </div>
+            )}
+            {!audioFile && !imageFile && (
+              <Input
+                isRequired
+                errorMessage={"Este campo é obrigatório"}
+                placeholder="Digite aqui sua frase"
+                type="textarea"
+                value={input}
+                variant="underlined"
+                onChange={(e) => setInput(e.target.value)}
+              />
+            )}
+          </div>
 
-          <div className="flex gap-3 justify-end">
+          <div className="flex gap-2 justify-end">
             <ImageUploader setImageFile={setImageFile} />
             <AudioUploader setAudioFile={setAudioFile} />
-            <Button isIconOnly color="primary" radius="full" type="submit">
+            <Button
+              isIconOnly
+              className="border dark:border-zinc-600"
+              color="primary"
+              radius="full"
+              type="submit"
+            >
               <LuSend />
             </Button>
           </div>
@@ -116,7 +122,7 @@ export default function Home() {
             {message.corrected_pt && (
               <>
                 <span className="text-lg">Frase original:</span>
-                <span className="flex gap-3 items-start p-4 rounded-xl bg-blue-100 shadow dark:bg-blue-900">
+                <span className="flex gap-3 items-start p-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 shadow">
                   <Typewriter text={message.corrected_pt} />
                 </span>
               </>
@@ -127,7 +133,7 @@ export default function Home() {
             {message.en_translation && (
               <>
                 <span className="text-lg">Frase traduzida:</span>
-                <span className="flex gap-3 items-start p-4 rounded-xl bg-blue-100 shadow dark:bg-blue-900">
+                <span className="flex gap-3 items-start p-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 shadow">
                   <Typewriter text={message.en_translation} />
                 </span>
               </>
@@ -142,7 +148,7 @@ export default function Home() {
                   {message.grammar_tips.map((tip) => (
                     <span
                       key={tip}
-                      className="flex gap-3 items-start p-4 rounded-xl bg-blue-50 shadow dark:bg-blue-950"
+                      className="flex gap-3 items-start p-3 rounded-lg bg-zinc-100 dark:bg-zinc-700 shadow"
                     >
                       <Typewriter text={tip} />
                     </span>

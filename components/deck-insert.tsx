@@ -12,7 +12,7 @@ type DeckInsertProps = {
 export function DeckInsert({ refetchDecks }: DeckInsertProps) {
   return (
     <ModalDeck refetchDecks={refetchDecks}>
-      <Card className="p-3 border w-full h-full border-dashed cursor-pointer border-primary hover:scale-105 shadow-none">
+      <Card className="p-3 border min-h-[171px] w-full h-full border-dashed cursor-pointer border-primary hover:scale-105 shadow-none">
         <CardBody className="flex items-center justify-center text-4xl text-primary">
           <LuPlus />
         </CardBody>

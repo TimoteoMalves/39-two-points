@@ -40,6 +40,7 @@ export default function AudioUploader({ setAudioFile }: AudioUploaderProps) {
 
       <Button
         isIconOnly
+        className="border dark:border-zinc-600"
         color="default"
         radius="full"
         type="button"
