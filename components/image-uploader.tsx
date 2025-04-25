@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@heroui/button";
+import { Tooltip } from "@heroui/tooltip";
 import { useRef } from "react";
 import { LuImage } from "react-icons/lu";
 
@@ -38,16 +39,18 @@ export default function ImageUploader({ setImageFile }: ImageUploaderProps) {
         onChange={handleChange}
       />
 
-      <Button
-        isIconOnly
-        className="border dark:border-zinc-600"
-        color="default"
-        radius="full"
-        type="button"
-        onPress={handleButtonClick}
-      >
-        <LuImage />
-      </Button>
+      <Tooltip content="Enviar arquivo de imagem">
+        <Button
+          isIconOnly
+          className="border dark:border-zinc-600"
+          color="default"
+          radius="full"
+          type="button"
+          onPress={handleButtonClick}
+        >
+          <LuImage />
+        </Button>
+      </Tooltip>
     </>
   );
 }

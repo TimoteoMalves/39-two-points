@@ -31,6 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from "@heroui/table";
+import { Tooltip } from "@heroui/tooltip";
 
 export default function Home() {
   const [input, setInput] = useState("");
@@ -146,15 +147,17 @@ export default function Home() {
                 <div className="flex gap-2">
                   <ImageUploader setImageFile={setImageFile} />
                   <AudioUploader setAudioFile={setAudioFile} />
-                  <Button
-                    isIconOnly
-                    className="border dark:border-zinc-600"
-                    color="primary"
-                    radius="full"
-                    type="submit"
-                  >
-                    <LuSend />
-                  </Button>
+                  <Tooltip content="Enviar">
+                    <Button
+                      isIconOnly
+                      className="border dark:border-zinc-600"
+                      color="primary"
+                      radius="full"
+                      type="submit"
+                    >
+                      <LuSend />
+                    </Button>
+                  </Tooltip>
                 </div>
               </div>
             </div>
