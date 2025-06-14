@@ -295,21 +295,18 @@ const CameraCapture = ({ setImageFile, setVideoFile }: CameraCaptureProps) => {
             Parar Gravação
           </Button>
         )}
-      </div>
-      {hasMultipleCameras && (
-        <div className="flex justify-center mt-4">
+        {hasMultipleCameras && (
           <Button
             onPress={toggleCamera}
             isDisabled={isRecording || error !== null}
-            className="w-full sm:w-auto bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-xl transition duration-300 ease-in-out shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-50"
           >
             Trocar Câmera ({facingMode === "user" ? "Frontal" : "Traseira"})
           </Button>
-        </div>
-      )}
-      <Button onPress={() => setHideVideo(!hideVideo)} className="mt-4">
-        {hideVideo ? "Mostrar Vídeo" : "Ocultar Vídeo"}
-      </Button>
+        )}
+        <Button onPress={() => setHideVideo(!hideVideo)}>
+          {hideVideo ? "Mostrar Vídeo" : "Ocultar Vídeo"}
+        </Button>
+      </div>
 
       {/* Canvas oculto usado para a captura de imagem - display:none o mantém invisível */}
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>

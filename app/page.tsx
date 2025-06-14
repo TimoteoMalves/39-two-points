@@ -2,7 +2,6 @@
 
 import CameraCapture from "@/components/capture-image";
 import { useGeminiChat } from "@/hooks/useGemini";
-import { speak } from "@/utils/speak";
 import { Button } from "@heroui/button";
 import { Spinner } from "@heroui/spinner";
 import { Tooltip } from "@heroui/tooltip";
@@ -11,7 +10,7 @@ import { useState } from "react";
 export default function Home() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
-  const { message, loading, error, sendImage, sendVideo } = useGeminiChat();
+  const { message, loading, sendImage, sendVideo } = useGeminiChat();
 
   const handleSubmit = async () => {
     if (videoFile) {
@@ -33,18 +32,14 @@ export default function Home() {
           className="border dark:border-zinc-600"
           color="primary"
           type="submit"
+          isDisabled={!imageFile && !videoFile}
           onPress={handleSubmit}
         >
           Enviar
         </Button>
       </Tooltip>
       {loading && <Spinner />}
-      {message && (
-        <>
-          <span>{message}</span>
-          <Button onPress={() => speak(message)}>Replay</Button>
-        </>
-      )}
+      {message && <span>{message}</span>}
     </section>
   );
 }
