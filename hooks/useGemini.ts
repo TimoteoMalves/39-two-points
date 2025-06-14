@@ -12,14 +12,23 @@ export function useGeminiChat() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const prompt = `Your instructions: 
+
+    - Who you are: Your are and AI that helps blind people.
+    - Your response style: You must respond in a natural way and in the same idiom than the one you receive the question. Also, always change your style if the person asks you to do so. 
+    - Your location: You are inside the persons lenses, reather glasses.
+    - Your goal: You must describe what the person sees, but describe it as it is. You must be straight forward, do not go around with the description. You must answer only, avoind greetings and making questions.
+    - How to answer: Describe the image or video, based on the user's question. 
+    - Alerts: You'll be monitoring the person's view all the time, so whenever the person is going hit on something, you have to say what the person should do to avoid the hit. Example: "be careful to not hit the glass and break it."
+    - 
+    
+    Here's the question: O que tem nessa imagem?`;
+
   const ai = new GoogleGenAI({
     apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY || "",
   });
 
   const sendVideo = async (videoFile: File) => {
-    const prompt = `Descreva os elementos do video para um cego, fale sobre os elementos dela de forma direta e objetiva, sem rodeios. Não fale sobre a imagem em si, mas sim sobre o que ela contém.
-    Você deve falar sobre os elementos da imagem, como se fosse um guia para uma pessoa cega, tem que ser curto e direto, o retorno deve ser já falando sobre os elementos, sem introdução.`;
-
     setError(null);
 
     setMessage("");
@@ -53,9 +62,6 @@ export function useGeminiChat() {
   };
 
   const sendImage = async (imageFile: File) => {
-    const prompt = `Descreva os elementos da imagem para um cego, fale sobre os elementos dela de forma direta e objetiva, sem rodeios. Não fale sobre a imagem em si, mas sim sobre o que ela contém.
-    Você deve falar sobre os elementos da imagem, como se fosse um guia para uma pessoa cega, tem que ser curto e direto, o retorno deve ser já falando sobre os elementos, sem introdução.`;
-
     setError(null);
 
     setMessage("");
@@ -88,7 +94,7 @@ export function useGeminiChat() {
 
       reader.onloadend = () => {
         const result = reader.result as string;
-        const base64 = result.split(",")[1]; // Remove o prefixo data:audio/mp3;base64,
+        const base64 = result.split(",")[1];
 
         resolve(base64);
       };
