@@ -232,10 +232,7 @@ const CameraCapture = ({ setImageFile, setVideoFile }: CameraCaptureProps) => {
   }, []); // Não precisa de mediaRecorderRef nas dependências, pois acessa .current
 
   return (
-    <div className="p-4 max-w-lg mx-auto bg-gray-100 rounded-lg shadow-lg font-inter">
-      <h1 className="text-2xl font-extrabold text-center mb-6 text-gray-800">
-        Captura de Mídia
-      </h1>
+    <div className="">
       {error && (
         <p className="text-red-600 text-center mb-4 p-3 bg-red-100 rounded-md border border-red-300">
           {error}
