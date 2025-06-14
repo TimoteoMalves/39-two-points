@@ -30,14 +30,12 @@ export default function Home() {
       <CameraCapture setImageFile={setImageFile} setVideoFile={setVideoFile} />
       <Tooltip content="Enviar">
         <Button
-          isIconOnly
           className="border dark:border-zinc-600"
           color="primary"
-          radius="full"
           type="submit"
           onPress={handleSubmit}
         >
-          <LuSend />
+          Enviar
         </Button>
       </Tooltip>
       {loading && <Spinner />}

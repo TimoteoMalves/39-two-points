@@ -1,4 +1,5 @@
 import { Button } from "@heroui/button";
+import { cn } from "@heroui/theme";
 import React, { useRef, useEffect, useState, useCallback } from "react";
 
 type CameraCaptureProps = {
@@ -9,6 +10,7 @@ type CameraCaptureProps = {
 };
 
 const CameraCapture = ({ setImageFile, setVideoFile }: CameraCaptureProps) => {
+  const [hideVideo, setHideVideo] = useState(true);
   // Referência para o elemento de vídeo onde o stream da câmera será exibido
   const videoRef = useRef<HTMLVideoElement>(null);
   // Referência para o elemento canvas usado para capturar frames de imagem
@@ -244,8 +246,12 @@ const CameraCapture = ({ setImageFile, setVideoFile }: CameraCaptureProps) => {
           autoPlay
           playsInline
           muted
-          className="w-full h-full object-cover rounded-xl"
+          className={cn(
+            "w-full h-full object-cover rounded-xl",
+            hideVideo ? "hidden" : "block"
+          )}
         ></video>
+
         {isRecording && (
           <div className="absolute top-2 left-2 px-3 py-1 bg-red-600 text-white text-sm font-semibold rounded-full flex items-center shadow-lg">
             <span className="relative flex h-3 w-3 mr-2">
@@ -301,6 +307,9 @@ const CameraCapture = ({ setImageFile, setVideoFile }: CameraCaptureProps) => {
           </Button>
         </div>
       )}
+      <Button onPress={() => setHideVideo(!hideVideo)} className="mt-4">
+        {hideVideo ? "Mostrar Vídeo" : "Ocultar Vídeo"}
+      </Button>
 
       {/* Canvas oculto usado para a captura de imagem - display:none o mantém invisível */}
       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
