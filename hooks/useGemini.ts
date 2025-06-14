@@ -5,13 +5,6 @@ import {
   createPartFromBase64,
 } from "@google/genai";
 import { useState } from "react";
-import { z } from "zod";
-
-const messageSchema = z.object({
-  corrected_pt: z.string(),
-  en_translation: z.string(),
-  grammar_tips: z.array(z.string()),
-});
 
 export function useGeminiChat() {
   const [message, setMessage] = useState("");
