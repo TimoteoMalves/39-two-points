@@ -2,6 +2,7 @@
 
 import CameraCapture from "@/components/capture-image";
 import { useGeminiChat } from "@/hooks/useGemini";
+import { speak } from "@/utils/speak";
 import { Button } from "@heroui/button";
 import { Spinner } from "@heroui/spinner";
 import { Tooltip } from "@heroui/tooltip";
@@ -39,7 +40,19 @@ export default function Home() {
         </Button>
       </Tooltip>
       {loading && <Spinner />}
-      {message && <span>{message}</span>}
+      {message && (
+        <>
+          <span>{message}</span>
+          <Button
+            className="border dark:border-zinc-600"
+            color="primary"
+            type="submit"
+            onPress={() => speak(message)}
+          >
+            Ouvir
+          </Button>
+        </>
+      )}
     </section>
   );
 }
