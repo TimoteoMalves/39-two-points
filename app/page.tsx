@@ -2,11 +2,11 @@
 
 import CameraCapture from "@/components/capture-image";
 import { useGeminiChat } from "@/hooks/useGemini";
+import { speak } from "@/utils/speak";
 import { Button } from "@heroui/button";
 import { Spinner } from "@heroui/spinner";
 import { Tooltip } from "@heroui/tooltip";
 import { useState } from "react";
-import { LuSend } from "react-icons/lu";
 
 export default function Home() {
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -39,7 +39,12 @@ export default function Home() {
         </Button>
       </Tooltip>
       {loading && <Spinner />}
-      <span>{message}</span>
+      {message && (
+        <>
+          <span>{message}</span>
+          <Button onPress={() => speak(message)}>Replay</Button>
+        </>
+      )}
     </section>
   );
 }

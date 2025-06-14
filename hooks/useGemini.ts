@@ -1,3 +1,4 @@
+import { speak } from "@/utils/speak";
 import {
   GoogleGenAI,
   createUserContent,
@@ -42,6 +43,7 @@ export function useGeminiChat() {
       });
 
       setMessage(response.text || "");
+      speak(response.text || "");
     } catch (err) {
       console.log(err);
       setError("An error occurred while sending the message.");
@@ -71,8 +73,7 @@ export function useGeminiChat() {
       });
 
       setMessage(response.text || "");
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      speak(response.text || "");
     } catch (err) {
       console.log(err);
       setError("An error occurred while sending the message.");
