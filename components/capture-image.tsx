@@ -4,7 +4,7 @@ import React, { useRef, useEffect, useState, useCallback } from "react";
 type CameraCaptureProps = {
   // Prop para definir o arquivo de imagem capturado (tipo File)
   setImageFile: (file: File | null) => void;
-  // Nova prop para definir o arquivo de vídeo gravado (tipo File)
+  // Nova prop para definir o o arquivo de vídeo gravado (tipo File)
   setVideoFile: (file: File | null) => void;
 };
 
@@ -18,10 +18,8 @@ const CameraCapture = ({ setImageFile, setVideoFile }: CameraCaptureProps) => {
   const [error, setError] = useState<string | null>(null);
   // Estado para controlar se a gravação de vídeo está ativa
   const [isRecording, setIsRecording] = useState(false);
-  // Estado para armazenar a instância do MediaRecorder
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
-    null
-  );
+  // Ref para armazenar a instância do MediaRecorder para persistência entre renders
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   // Ref para armazenar os chunks de dados do vídeo durante a gravação
   // Usamos um ref para evitar que o useEffect seja acionado a cada chunk adicionado
   const recordedChunksRef = useRef<Blob[]>([]);
@@ -29,125 +27,138 @@ const CameraCapture = ({ setImageFile, setVideoFile }: CameraCaptureProps) => {
   const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
   // Estado para saber se há mais de uma câmera disponível (frontal e traseira)
   const [hasMultipleCameras, setHasMultipleCameras] = useState(false);
-  // Ref para o stream da câmera
+  // Ref para o stream da câmera para persistência entre renders
   const mediaStreamRef = useRef<MediaStream | null>(null);
 
-  // Função para iniciar a câmera e configurar o MediaRecorder
-  const startCamera = useCallback(async () => {
-    // Limpa erros anteriores
-    setError(null);
-
-    // Para qualquer stream de câmera ativo antes de iniciar um novo
-    if (mediaStreamRef.current) {
-      mediaStreamRef.current.getTracks().forEach((track) => track.stop());
-    }
-
-    try {
-      // Configura as constraints para a câmera
-      const constraints: MediaStreamConstraints = {
-        video: { facingMode: facingMode },
-        audio: true, // Pedimos áudio para a gravação de vídeo
-      };
-
-      // Solicita acesso à câmera de vídeo e áudio
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      mediaStreamRef.current = stream; // Armazena o stream no ref
-
-      if (videoRef.current) {
-        // Atribui o stream da câmera ao elemento de vídeo
-        videoRef.current.srcObject = stream;
-      }
-
-      // Detecta se há múltiplas câmeras
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoInputDevices = devices.filter(
-        (device) => device.kind === "videoinput"
-      );
-      setHasMultipleCameras(videoInputDevices.length > 1);
-
-      // Configura o MediaRecorder
-      const options = { mimeType: "video/webm; codecs=vp8,opus" };
-      let recorder: MediaRecorder;
-      try {
-        recorder = new MediaRecorder(stream, options);
-      } catch (recorderErr) {
-        // Fallback para outro codec se o preferido não for suportado
-        console.warn(
-          "Codec 'vp8,opus' não suportado, tentando 'vp8'.",
-          recorderErr
-        );
-        try {
-          recorder = new MediaRecorder(stream, {
-            mimeType: "video/webm; codecs=vp8",
-          });
-        } catch (fallbackErr) {
-          console.error("Nenhum codec WebM suportado.", fallbackErr);
-          setError(
-            "Nenhum formato de gravação de vídeo suportado no seu navegador."
-          );
-          return;
-        }
-      }
-      setMediaRecorder(recorder);
-
-      // Evento disparado quando dados de mídia estão disponíveis
-      recorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          // Adiciona o chunk ao ref mutável
-          recordedChunksRef.current.push(event.data);
-        }
-      };
-
-      // Evento disparado quando a gravação é parada
-      recorder.onstop = () => {
-        // Processa os chunks coletados no ref
-        if (recordedChunksRef.current.length > 0) {
-          // Cria um Blob a partir dos chunks gravados
-          const videoBlob = new Blob(recordedChunksRef.current, {
-            type: recorder.mimeType,
-          });
-          // Cria um objeto File a partir do Blob do vídeo
-          const videoFile = new File(
-            [videoBlob],
-            `captured-video-${Date.now()}.webm`,
-            {
-              type: recorder.mimeType,
-              lastModified: Date.now(),
-            }
-          );
-          // Passa o objeto File para a função setVideoFile
-          setVideoFile(videoFile);
-          // Limpa os chunks após a gravação
-          recordedChunksRef.current = [];
-        } else {
-          console.warn("Gravação parada, mas nenhum dado foi capturado.");
-          setVideoFile(null);
-        }
-        setIsRecording(false); // Garante que o estado de gravação seja falso
-      };
-    } catch (err) {
-      console.error("Erro ao acessar a câmera:", err);
-      setError(
-        "Não foi possível acessar a câmera. Por favor, verifique as permissões de vídeo e áudio."
-      );
-    }
-  }, [facingMode, setVideoFile]); // 'facingMode' nas dependências para reiniciar a câmera ao trocar
-
-  // useEffect para iniciar a câmera na montagem e limpar na desmontagem
+  // useEffect principal para configurar a câmera e o MediaRecorder
   useEffect(() => {
-    startCamera();
+    const setupCameraAndRecorder = async () => {
+      // Limpa erros anteriores
+      setError(null);
 
-    // Limpeza: interrompe todos os tracks de mídia (câmera e microfone)
-    // quando o componente é desmontado para liberar os recursos.
+      // Para qualquer stream existente e MediaRecorder antes de iniciar um novo
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+        mediaStreamRef.current = null; // Limpa a referência ao stream antigo
+      }
+      if (
+        mediaRecorderRef.current &&
+        mediaRecorderRef.current.state !== "inactive"
+      ) {
+        mediaRecorderRef.current.stop();
+      }
+      mediaRecorderRef.current = null; // Limpa a referência ao recorder antigo
+
+      try {
+        // Configura as constraints para a câmera (frontal ou traseira)
+        const constraints: MediaStreamConstraints = {
+          video: { facingMode: facingMode },
+          audio: true, // Pedimos acesso ao áudio para gravação de vídeo
+        };
+
+        // Solicita acesso à câmera e microfone
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        mediaStreamRef.current = stream; // Armazena o stream no ref
+
+        if (videoRef.current) {
+          // Atribui o stream da câmera ao elemento de vídeo
+          videoRef.current.srcObject = stream;
+        }
+
+        // Detecta se há múltiplas câmeras para exibir o botão de troca
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoInputDevices = devices.filter(
+          (device) => device.kind === "videoinput"
+        );
+        setHasMultipleCameras(videoInputDevices.length > 1);
+
+        // Configura o MediaRecorder
+        const options = { mimeType: "video/webm; codecs=vp8,opus" };
+        let recorder: MediaRecorder;
+        try {
+          // Tenta criar o recorder com o codec preferido
+          recorder = new MediaRecorder(stream, options);
+        } catch (recorderErr) {
+          // Fallback para outro codec se o preferido não for suportado
+          console.warn(
+            "Codec 'vp8,opus' não suportado, tentando 'vp8'.",
+            recorderErr
+          );
+          try {
+            recorder = new MediaRecorder(stream, {
+              mimeType: "video/webm; codecs=vp8",
+            });
+          } catch (fallbackErr) {
+            console.error("Nenhum codec WebM suportado.", fallbackErr);
+            setError(
+              "Nenhum formato de gravação de vídeo suportado no seu navegador."
+            );
+            return;
+          }
+        }
+        mediaRecorderRef.current = recorder; // Armazena o recorder no ref
+
+        // Evento disparado quando dados de mídia estão disponíveis
+        recorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            // Adiciona o chunk ao ref mutável, não dispara re-render
+            recordedChunksRef.current.push(event.data);
+          }
+        };
+
+        // Evento disparado quando a gravação é parada
+        recorder.onstop = () => {
+          // Processa os chunks coletados no ref
+          if (recordedChunksRef.current.length > 0) {
+            // Cria um Blob a partir dos chunks gravados
+            const videoBlob = new Blob(recordedChunksRef.current, {
+              type: recorder.mimeType,
+            });
+            // Cria um objeto File a partir do Blob do vídeo
+            const videoFile = new File(
+              [videoBlob],
+              `captured-video-${Date.now()}.webm`,
+              {
+                type: recorder.mimeType,
+                lastModified: Date.now(),
+              }
+            );
+            // Passa o objeto File para a função setVideoFile
+            setVideoFile(videoFile);
+            // Limpa os chunks após a gravação
+            recordedChunksRef.current = [];
+          } else {
+            console.warn("Gravação parada, mas nenhum dado foi capturado.");
+            setVideoFile(null);
+          }
+          setIsRecording(false); // Garante que o estado de gravação seja falso
+        };
+      } catch (err) {
+        console.error("Erro ao acessar a câmera:", err);
+        setError(
+          "Não foi possível acessar a câmera. Por favor, verifique as permissões de vídeo e áudio."
+        );
+      }
+    };
+
+    setupCameraAndRecorder();
+
+    // Função de limpeza: interrompe todos os tracks de mídia e o recorder
+    // quando o componente é desmontado ou o useEffect é re-executado (e.g., troca de câmera)
     return () => {
       if (mediaStreamRef.current) {
         mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+        mediaStreamRef.current = null;
       }
-      if (mediaRecorder && mediaRecorder.state !== "inactive") {
-        mediaRecorder.stop();
+      if (
+        mediaRecorderRef.current &&
+        mediaRecorderRef.current.state !== "inactive"
+      ) {
+        mediaRecorderRef.current.stop();
+        mediaRecorderRef.current = null;
       }
     };
-  }, [startCamera, mediaRecorder]); // 'startCamera' e 'mediaRecorder' nas dependências para limpeza correta
+  }, [facingMode, setVideoFile]); // Dependências: re-executa ao trocar a câmera ou se setVideoFile mudar
 
   // Função para alternar entre as câmeras frontal e traseira
   const toggleCamera = useCallback(() => {
@@ -197,20 +208,28 @@ const CameraCapture = ({ setImageFile, setVideoFile }: CameraCaptureProps) => {
 
   // Função para iniciar a gravação de vídeo
   const startRecording = useCallback(() => {
-    if (mediaRecorder && mediaRecorder.state === "inactive") {
+    // Acessa o mediaRecorder através do seu ref
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state === "inactive"
+    ) {
       recordedChunksRef.current = []; // Limpa os chunks anteriores antes de iniciar nova gravação
-      mediaRecorder.start();
+      mediaRecorderRef.current.start(); // Inicia a gravação
       setIsRecording(true);
       setVideoFile(null); // Limpa o vídeo anterior ao iniciar uma nova gravação
     }
-  }, [mediaRecorder, setVideoFile]);
+  }, [setVideoFile]);
 
   // Função para parar a gravação de vídeo
   const stopRecording = useCallback(() => {
-    if (mediaRecorder && mediaRecorder.state === "recording") {
-      mediaRecorder.stop();
+    // Acessa o mediaRecorder através do seu ref
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state === "recording"
+    ) {
+      mediaRecorderRef.current.stop(); // Para a gravação
     }
-  }, [mediaRecorder]);
+  }, []); // Não precisa de mediaRecorderRef nas dependências, pois acessa .current
 
   return (
     <div className="p-4 max-w-lg mx-auto bg-gray-100 rounded-lg shadow-lg font-inter">
@@ -253,7 +272,10 @@ const CameraCapture = ({ setImageFile, setVideoFile }: CameraCaptureProps) => {
         {!isRecording ? (
           <Button
             onPress={startRecording}
-            isDisabled={!mediaRecorder || error !== null || isRecording}
+            // Verifica se mediaRecorderRef.current existe e está inativo
+            isDisabled={
+              !mediaRecorderRef.current || error !== null || isRecording
+            }
             className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-xl transition duration-300 ease-in-out shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
           >
             Iniciar Gravação
@@ -261,7 +283,10 @@ const CameraCapture = ({ setImageFile, setVideoFile }: CameraCaptureProps) => {
         ) : (
           <Button
             onPress={stopRecording}
-            isDisabled={!mediaRecorder || error !== null || !isRecording}
+            // Verifica se mediaRecorderRef.current existe e está gravando
+            isDisabled={
+              !mediaRecorderRef.current || error !== null || !isRecording
+            }
             className="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-xl transition duration-300 ease-in-out shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
           >
             Parar Gravação
