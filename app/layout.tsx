@@ -41,19 +41,9 @@ export default function RootLayout({
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          <div className="relative flex flex-col h-screen">
-            <Navbar />
-
-            <main className="container mx-auto max-w-7xl py-8 px-6 flex-grow">
-              {children}
-            </main>
-            <footer className="w-full flex items-center justify-center py-3">
-              <div className="flex items-center gap-1 text-current">
-                <span className="text-default-600">Powered by</span>
-                <p className="text-primary">DinoDecks</p>
-              </div>
-            </footer>
-          </div>
+          <main className="container mx-auto max-w-7xl py-8 px-6 flex-grow">
+            {children}
+          </main>
         </Providers>
       </body>
     </html>
